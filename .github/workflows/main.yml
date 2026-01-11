@@ -1,0 +1,52 @@
+name: CI-CD Pipeline
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+
+jobs:
+    pipeline:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            # ---- Build Stage (basic sanity build) ----
+            - name: Build (Python compile)
+              run: |
+                  python -m compileall app
+
+            # ---- Unit Test Stage ----
+            - name: Unit tests
+              run: |
+                  pytest -q tests/unit_test.py
+
+            # ---- Lint Stage ----
+            - name: Lint (flake8)
+              run: |
+                  flake8 .
+
+            # ---- Package Stage (Docker build) ----
+            - name: Package (Docker build)
+              run: |
+                  docker build -t mlops-app:${{ github.sha }} .
+
+            # ---- Smoke Test Stage (run container + request) ----
+            - name: Smoke test (run container)
+              run: |
+                  docker run -d --rm --name mlops-app -p 8000:8000 mlops-app:${{ github.sha }}
+                  python scripts/smoke_test.py
+                  docker stop mlops-app
