@@ -24,11 +24,11 @@ class HealthCheckError(Exception):
 
 class SmokeTestRunner:
     """Manages smoke test execution for the ML service."""
-    
+
     def __init__(self, config: Optional[SmokeTestConfig] = None):
         self.config = config or SmokeTestConfig()
         self.session = requests.Session()
-    
+
     def _check_health(self) -> bool:
         """Check if the service is healthy."""
         try:
@@ -39,23 +39,23 @@ class SmokeTestRunner:
             return response.status_code == 200
         except RequestException:
             return False
-    
+
     def wait_for_service(self) -> None:
         """Wait for the service to become available."""
         start_time = time.time()
         elapsed = 0
-        
+
         while elapsed < self.config.health_timeout:
             if self._check_health():
                 return
             time.sleep(self.config.health_check_interval)
             elapsed = time.time() - start_time
-        
+
         raise HealthCheckError(
             f"Service at {self.config.base_url} did not become healthy "
             f"within {self.config.health_timeout} seconds"
         )
-    
+
     def run_prediction_test(self) -> dict:
         """Execute the prediction endpoint test."""
         response = self.session.post(
@@ -68,7 +68,7 @@ class SmokeTestRunner:
         )
         response.raise_for_status()
         return response.json()
-    
+
     def execute(self) -> int:
         """Run the complete smoke test suite."""
         try:

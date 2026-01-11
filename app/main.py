@@ -1,6 +1,5 @@
 from fastapi import FastAPI, APIRouter
 from pydantic import BaseModel, Field
-from typing import Optional
 
 from app.feature_engineering import hashed_feature
 
@@ -23,7 +22,7 @@ class HealthResponse(BaseModel):
 
 class PredictionService:
     """Service layer for prediction logic."""
-    
+
     @staticmethod
     def compute_bucket(user_id: str, num_buckets: int) -> int:
         """Compute bucket assignment for a user."""
@@ -56,11 +55,11 @@ def create_app() -> FastAPI:
         description="Service for computing user bucket assignments",
         version="1.0.0"
     )
-    
+
     # Register routers
     app.include_router(health_router)
     app.include_router(api_router)
-    
+
     return app
 
 
