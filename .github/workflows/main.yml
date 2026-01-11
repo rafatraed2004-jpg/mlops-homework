@@ -48,5 +48,5 @@ jobs:
             - name: Smoke test (run container)
               run: |
                   docker run -d --rm --name mlops-app -p 8000:8000 mlops-app:${{ github.sha }}
-                  python scripts/smoke_test.py
+                  python tests/smoke_test.py
                   docker stop mlops-app
