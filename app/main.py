@@ -6,8 +6,11 @@ from app.feature_engineering import hashed_feature
 
 class PredictRequest(BaseModel):
     """Request model for prediction endpoint."""
-    user_id: str = Field(..., description="User identifier for bucket assignment")
-    num_buckets: int = Field(default=1000, ge=1, description="Number of buckets for hashing")
+    user_id: str = Field(..., description="Bucket identifier")
+    num_buckets: int = Field(
+        default=1000,
+        ge=1,
+        description="Number of buckets for hashing")
 
 
 class PredictResponse(BaseModel):

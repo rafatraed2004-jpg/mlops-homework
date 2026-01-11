@@ -80,7 +80,7 @@ class SmokeTestRunner:
             print(f"Health check failed: {e}")
             return 1
         except requests.HTTPError as e:
-            print(f"Smoke test failed: HTTP {e.response.status_code} - {e.response.text}")
+            print(f"Smoke test failed: HTTP {e}")
             return 1
         except RequestException as e:
             print(f"Smoke test failed: Request error - {e}")
